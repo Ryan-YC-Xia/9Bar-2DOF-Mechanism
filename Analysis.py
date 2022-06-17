@@ -1,18 +1,5 @@
 from math import cos, sin, acos, asin, degrees, radians, sqrt
-
-
-class Mechanism:
-    def __init__(self) -> None:
-        self.lab = 130.000
-        self.lbc = 50.000
-        self.lcd = 27.500
-        self.lde = self.lhm = self.lan = 0
-        self.lef = 172.500
-        self.ldg = self.lek = 147.022
-        self.lag = self.lnk = 60.000
-        self.lah = self.lnm = 45.000
-        self.beta1 = self.beta2 = 90
-        self.beta3 = 0
+from Configuration import Mechanism
 
 class State:
     def __init__(self, mechanism:Mechanism, x, y) -> None:
@@ -28,14 +15,53 @@ class State:
         self.dy = self.ey 
         self.cx = self.dx - m.lcd
         self.cy = self.dy
-        # Equation here based on lbc and ldg
-        rhs_bc = (m.lab**2 - m.lbc**2 + self.cx**2 + self.cy**2)/(2*m.lab)
-        rhs_dg = (m.lag**2 - m.ldg**2 + self.dx**2 + self.dy**2)/(2*m.lag)
-        alpha1 = solve_alpha(self.cx, self.cy, rhs_bc)
-        alpha2 = solve_alpha(self.dx, self.dy, rhs_dg)
-        if alpha1 is None or alpha2 is None:
-            print('Error: No Possible Resolution')
+        self.alpha1 = self.calculate_alpha1(m)
+        self.alpha2 = self.calculate_alpha2(m)
+        self.bx = m.lab * cos(radians(self.alpha1))
+        self.by = m.lab * sin(radians(self.alpha1))
+        self.gx = m.lag * cos(radians(self.alpha2))
+        self.gy = m.lag * cos(radians(self.alpha2))
+
+    def analyze_pressure_angles(self):
+        pass
         
+    def calculate_alpha1(self, m:Mechanism):
+        # Equation here based on lbc
+        rhs_bc = (m.lab**2 - m.lbc**2 + self.cx**2 + self.cy**2)/(2*m.lab)
+        alpha1_cand = solve_alpha(self.cx, self.cy, rhs_bc)
+        if alpha1_cand is None:
+            print('Error: No Possible Resolution')
+            return
+        for value in alpha1_cand:
+            bx = m * cos(radians(value))
+            if bx >= self.cx:
+                alpha1_cand.remove(value)
+        if len(alpha1_cand) == 0:
+            print('Error: No valid alpha1 value')
+            return
+        if len(alpha1_cand) > 1:
+            print('Error: Fail to obtain sole solution for alpha1')
+            return
+        return alpha1_cand[0]
+
+    def calculate_alpha2(self, m:Mechanism):
+        # Equation here based on ldg
+        rhs_dg = (m.lag**2 - m.ldg**2 + self.dx**2 + self.dy**2)/(2*m.lag)
+        alpha2_cand = solve_alpha(self.dx, self.dy, rhs_dg)
+        if alpha2_cand is None:
+            print('Error: No Possible Resolution')
+            return
+        for value in alpha2_cand:
+            if value >= 90 and value <= 270:
+                alpha2_cand.remove(value)
+        if len(alpha2_cand) == 0:
+            print('Error: No valid alpha2 value')
+            return
+        if len(alpha2_cand) > 1:
+            print('Error: Fail to obtain sole solution for alpha2')
+            return
+        return alpha2_cand[0]
+
 
 #
 # Helper Functions for caculating angles
@@ -73,6 +99,3 @@ def solve_asum(sin_v):
         asum.append(180-angle)
         asum.append(360+angle)
     return asum
-
-
-
