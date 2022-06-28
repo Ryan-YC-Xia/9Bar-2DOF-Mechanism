@@ -1,6 +1,7 @@
 import numpy as np
 import math
 from Configuration import Mechanism
+from Analysis import State
 
 
 # mechanism configuration input
@@ -53,4 +54,8 @@ def get_endpoints(interval_lst, formula_lst, h_lst, beta_lst):
 
 # prepare for analysis
 mech = Mechanism(lab, lbc, lcd, lde, lhm, lan, lef, ldg, lek, lag, lnk, lah, lnm, beta1, beta2, beta3)
-get_endpoints(interval_lst, formula_lst, h_lst, beta_lst)
+endpoints = get_endpoints(interval_lst, formula_lst, h_lst, beta_lst)
+
+state_lst = []
+for endpoint in endpoints:
+    state = State(mech, endpoint[0], endpoint[1])
