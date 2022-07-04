@@ -59,3 +59,6 @@ endpoints = get_endpoints(interval_lst, formula_lst, h_lst, beta_lst)
 state_lst = []
 for endpoint in endpoints:
     state = State(mech, endpoint[0], endpoint[1])
+    state.analyze()
+    state_lst.append(state)
+
