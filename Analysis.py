@@ -35,7 +35,7 @@ class State:
             print('Error: No Possible Resolution')
             return
         for value in alpha1_cand:
-            bx = m * cos(radians(value))
+            bx = m.lab * cos(radians(value))
             if bx >= self.c[0]:
                 alpha1_cand.remove(value)
         if len(alpha1_cand) == 0:
@@ -75,7 +75,7 @@ def solve_alpha(a, b, c):
     if abs(c/den) > 1:
         return None
     asum = solve_asum(c/den)   
-    alpha = [a - theta for a in asum]
+    alpha = [norm_angle(a-theta) for a in asum]
     return alpha
 
 def solve_theta(cos_t, sin_t):
@@ -91,17 +91,20 @@ def solve_theta(cos_t, sin_t):
     return None
 
 def solve_asum(sin_v):
-    angle = degrees(asin(abs(sin_v)))
+    angle = degrees(asin(sin_v))
     asum = []
-    if sin_v >= 0:
-        asum.append(angle)
-        asum.append(180-angle)
-    else:
-        asum.append(180-angle)
-        asum.append(360+angle)
+    asum.append(angle)
+    asum.append(180-angle)
     return asum
+
+def norm_angle(angle):
+    while angle < 0:
+        angle += 360
+    while angle > 360:
+        angle -= 360
+    return angle
 
 # Calculate the angle given three points
 def calculate_angle(a, b, c):
-        ang = degrees(atan2(c[1]-b[1], c[0]-b[0]) - atan2(a[1]-b[1], a[0]-b[0]))
-        return abs(ang)
+    ang = degrees(atan2(c[1]-b[1], c[0]-b[0]) - atan2(a[1]-b[1], a[0]-b[0]))
+    return abs(ang)
