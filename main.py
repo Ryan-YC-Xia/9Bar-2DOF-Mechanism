@@ -34,9 +34,13 @@ while sum(beta_lst) != 360:
     beta_lst.append(beta)
     formula_lst.append(formula)
 
+# 初始坐标
+x = float(input("初始F横坐标"))
+y = float(input("初始F纵坐标"))
+
 
 # acquire the list of enpoints tuple
-def get_endpoints(formula_lst, h_lst, beta_lst):
+def get_endpoints(formula_lst, h_lst, beta_lst, x, y):
     endpoint_lst = []
     for index in range(0, len(beta_lst)):
         for theta in [round(num,1) for num in np.arange(0, beta_lst[index] + 0.5, 0.5)]:
@@ -44,7 +48,7 @@ def get_endpoints(formula_lst, h_lst, beta_lst):
                 s = sum(h_lst[0: index]) + h_lst[index] * (10 * pow(theta/beta_lst[index], 3) - 15 * pow(theta/beta_lst[index], 4) + 6 * pow(theta/beta_lst[index], 5))
             else:
                 s = sum(h_lst[0: index]) + h_lst[index] * (35 * pow(theta/beta_lst[index], 4) - 84 * pow(theta/beta_lst[index], 5) + 70 * pow(theta/beta_lst[index], 6) - 20 * pow(theta/beta_lst[index], 7))
-            endpoint_lst.append((s * math.cos(math.radians(theta)), s * math.sin(math.radians(theta))))
+            endpoint_lst.append((s * math.cos(math.radians(theta)) + x, s * math.sin(math.radians(theta)) + y))
     return endpoint_lst
 
 # prepare for analysis
