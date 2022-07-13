@@ -5,6 +5,7 @@ class State:
     def __init__(self, mechanism:Mechanism, x, y) -> None:
         self.mech = mechanism
         self.f = (x, y)
+        # print('F:', self.f)
 
     def analyze(self):
         # Points
@@ -31,6 +32,7 @@ class State:
         # Equation here based on lbc
         rhs_bc = (m.lab**2 - m.lbc**2 + self.c[0]**2 + self.c[1]**2)/(2*m.lab)
         alpha1_cand = solve_alpha(self.c[0], self.c[1], rhs_bc)
+        # print('alpha1 candidate:', alpha1_cand)
         if alpha1_cand is None:
             print('Error: No Possible Resolution')
             return
@@ -50,6 +52,7 @@ class State:
         # Equation here based on ldg
         rhs_dg = (m.lag**2 - m.ldg**2 + self.d[0]**2 + self.d[1]**2)/(2*m.lag)
         alpha2_cand = solve_alpha(self.d[0], self.d[1], rhs_dg)
+        # print('alpha2 candidate:', alpha2_cand)
         if alpha2_cand is None:
             print('Error: No Possible Resolution')
             return
